@@ -24,7 +24,7 @@ module "consul" {
   sec_group        = "${module.common.sec_group_generic_id}"
   provision_script = [ "/usr/bin/sudo /sbin/setenforce 0",
                        "/bin/curl https://raw.githubusercontent.com/ncorrare/terraform-examples/master/provision.sh | /usr/bin/sudo /bin/bash",
-                       "/usr/bin/sudo /opt/puppetlabs/bin/puppet apply -e 'include profile::consulserver'"
+                       "/usr/bin/sudo /opt/puppetlabs/bin/puppet apply --environment enablementlab -e 'include profile::consulserver'"
                      ]
 }
 
@@ -43,7 +43,7 @@ module "directory" {
   sec_group        = "${module.common.sec_group_generic_id}"
   provision_script = [ "/usr/bin/sudo /sbin/setenforce 0",
                        "/bin/curl https://raw.githubusercontent.com/ncorrare/terraform-examples/master/provision.sh | /usr/bin/sudo /bin/bash",
-                       "/usr/bin/sudo /opt/puppetlabs/bin/puppet apply --environment enablementlab -e 'include profile::directory'",
+                       "/usr/bin/sudo FACTER_consulserver=${module.consul.public_hostname} /opt/puppetlabs/bin/puppet apply --environment enablementlab -e 'include profile::directory'",
                        "curl https://raw.githubusercontent.com/ncorrare/hashi-control-repo/vagrant/site/profile/files/dump.ldif > /tmp/dump.ldif && ldapadd -x -D 'cn=Manager,dc=example,dc=com' -w hashicorp -p 389 -h $(hostname) -f /tmp/dump.ldif"
                      ]
 }
@@ -64,3 +64,7 @@ module "students" {
   students         = "${var.students}"
   consulserver     = "${module.consul.public_hostname}"
 }
+
+output "student-servers" { value = "${module.students.vault-servers}" }
+output "directory-server" { value = "ssh ec2-user@${module.directory.public_hostname}" }
+output "consul-server" { value = "ssh ec2-user@${module.consul.public_hostname} -L 8500:localhost:8500" }

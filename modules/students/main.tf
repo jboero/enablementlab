@@ -18,7 +18,7 @@ variable "consulserver"     { }
 
 resource "aws_instance" "vault-node" {
   ami                         = "${lookup(var.aws_amis, var.aws_region)}"
-  count                       = "${length(var.students)}"
+  count                       = "${length(var.students) * 3}"
   instance_type               = "${var.instance_type}"
   subnet_id                   = "${var.subnet_id}"
   vpc_security_group_ids      = ["${var.sec_group}"]

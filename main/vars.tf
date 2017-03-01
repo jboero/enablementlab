@@ -18,14 +18,14 @@ variable "aws_amis" {
   }
 }
 
-variable "vpc_cidr" {
+variable "cidr" {
   description = "Subnet to be used for internal comms"
   default     = "172.16.0.0/16"
 }
 
 variable "sshkey" {
   description = "Name of the SSH Key Pair (in aws) used to login into the systems"
-  default     = "id_rsa"
+  default     = "nico-mbook-pub"
 }
 
 variable "keypath" {
@@ -35,5 +35,4 @@ variable "keypath" {
 
 variable "awsaccountid" {
   description = "AWS Account ID"
-  default     = "952786520962"
 }

@@ -15,31 +15,37 @@ variable "subnet_id"        { }
 variable "students"         { type = "list" } 
 variable "consulserver"     { } 
 
-#data "template_file" "workstation" {
-#  count    = "${var.students}"
-#  template = "${file("templates/init.sh.tpl")}"
-#
-#  vars {
-#    namespace    = "${var.namespace}"
-#    servername   = "${var.servername}-${element(var.students, count.index)}-${var.namespace}-${count.index}}"
-#    count        = "${count.index}"
-#    username     = "${element(var.students, count.index)}"
-#    consulserver = "${var.consulserver}"
-#
-#  }
-#}
 
 resource "aws_instance" "vault-node" {
   ami                         = "${lookup(var.aws_amis, var.aws_region)}"
-  count                       = "${length(var.students) * 3}"
+  count                       = "${length(var.students)}"
   instance_type               = "${var.instance_type}"
   subnet_id                   = "${var.subnet_id}"
   vpc_security_group_ids      = ["${var.sec_group}"]
   associate_public_ip_address = "${var.public_ip}"
   key_name                    = "${var.sshkey}"
+  provisioner "file" {
+    source      = "${path.module}/files/vault.zip"
+    destination = "/tmp/vault.zip"
+    connection {
+      type        = "ssh"
+      user        = "ec2-user"
+      private_key = "${file(var.keypath)}"
+    }
+  }
+  provisioner "remote-exec" {
+    inline = [ "/usr/bin/sudo /sbin/setenforce 0",
+               "/bin/curl https://raw.githubusercontent.com/ncorrare/terraform-examples/master/provision.sh | /usr/bin/sudo /bin/bash",
+               "/usr/bin/sudo FACTER_training_username=${element(var.students, count.index)} FACTER_namespace=${var.namespace} FACTER_consulserver=${var.consulserver} FACTER_vaulturl=/tmp/vault.zip /opt/puppetlabs/bin/puppet apply --environment enablementlab -e 'include profile::vault'"
+                     ]
+    connection {
+      type        = "ssh"
+      user        = "ec2-user"
+      private_key = "${file(var.keypath)}"
+    }
+  }  
   tags {
     Name = "${var.servername}-${element(var.students, count.index)}-${var.namespace}-${count.index}"
   }
-#    user_data = "${element(data.template_file.workstation.*.rendered, count.index)}"
 }
-output "vault-servers" { value = "${aws_instance.vault-node.public_dns}" }
+output "vault-servers" { value = ["${aws_instance.vault-node.*.public_dns}"] }

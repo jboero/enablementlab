@@ -2,7 +2,6 @@ variable "namespace" {
   description = "Namespace to use. This string will be used to identify the resources created that are aligned to each lab"
 }
 
-
 variable "aws_region" {
   description = "The AWS region to create resources in."
   default     = "eu-west-1"
@@ -35,4 +34,9 @@ variable "keypath" {
 
 variable "awsaccountid" {
   description = "AWS Account ID"
+}
+
+variable "students" {
+  description = "List of Students (used to generate usernames, vault mountpoints, etc. ...)"
+  type = "list"
 }

@@ -47,3 +47,20 @@ module "directory" {
                        "curl https://raw.githubusercontent.com/ncorrare/hashi-control-repo/vagrant/site/profile/files/dump.ldif > /tmp/dump.ldif && ldapadd -x -D 'cn=Manager,dc=example,dc=com' -w hashicorp -p 389 -h $(hostname) -f /tmp/dump.ldif"
                      ]
 }
+
+module "students" {
+  source = "../modules/students"
+  
+  namespace        = "${var.namespace}"
+  servername       = "vault"
+  aws_amis         = "${var.aws_amis}"
+  aws_region       = "${var.aws_region}"
+  sshkey           = "${var.sshkey}"
+  keypath          = "${var.keypath}"
+  subnet_id        = "${module.common.subnet_id}"
+  instance_type    = "t2.micro"
+  public_ip        = "true"
+  sec_group        = "${module.common.sec_group_generic_id}"
+  students         = "${var.students}"
+  consulserver     = "${module.consul.public_hostname}"
+}

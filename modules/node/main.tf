@@ -31,6 +31,8 @@ resource "aws_instance" "node" {
     }
   }
   tags {
-    Name = "${var.servername}"
+    Name = "${var.servername}-${var.namespace}"
   }
 }
+
+output public_hostname { value = "${aws_instance.node.public_dns}"}

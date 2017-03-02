@@ -60,7 +60,7 @@ The suggested architecture, is to run a three-node cluster to avoid split-brain 
 
 A basic configuration file could be as follows:
 
-{
+{ {
 
 	"backend": {
 
@@ -92,11 +92,12 @@ A basic configuration file could be as follows:
 
 }
 
+}
 Where the backend configuration specifies where to store the data. Data will be stored encrypted at rest, and only available to vault after the unseal process.
 
 Data will be encrypted at all times (including transit via TLS), as described by the diagram below:
 
-![image alt text](image_2.png)
+![image alt text](https://www.vaultproject.io/assets/images/layers-368ccce4.png)
 
 In order to enable the Enterprise UI, set the ui parameter to true, as described in [https://www.vaultproject.io/docs/config/index.html#ui](https://www.vaultproject.io/docs/config/index.html#ui).
 

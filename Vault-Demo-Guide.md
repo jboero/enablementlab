@@ -7,55 +7,34 @@
 In order to set up Vault working in Cluster mode, an HA Backend is required. The recommended backend is Consul, although there are others supported such as DynamoDB. Please refer to the *Backend Reference* on [https://www.vaultproject.io/docs/config/](https://www.vaultproject.io/docs/config/) for more information.
 
 Vault Enterprise is distributed as a pre-compiled binary, so in order to run in on a (EL, or other systemd based) system a Systemd unit file is required. The following example can be used as reference:
+```
+[Unit]
+Description=Vault server
+Requires=basic.target network.target
+After=basic.target network.target
 
-*[Unit]*
+[Service]
+User=vault
+Group=vault
+PrivateDevices=yes
+PrivateTmp=yes
+ProtectSystem=full
+ProtectHome=read-only
+SecureBits=keep-caps
+Capabilities=CAP_IPC_LOCK+ep
+CapabilityBoundingSet=CAP_SYSLOG CAP_IPC_LOCK
+NoNewPrivileges=yes
+Environment=GOMAXPROCS=1
+ExecStart=/usr/local/bin/vault server -config=/etc/vault/config.json
+KillSignal=SIGINT
+TimeoutStopSec=30s
+Restart=on-failure
+StartLimitInterval=60s
+StartLimitBurst=3
 
-*Description=Vault server*
-
-*Requires=basic.target network.target*
-
-*After=basic.target network.target*
-
-*[Service]*
-
-*User=vault*
-
-*Group=vault*
-
-*PrivateDevices=yes*
-
-*PrivateTmp=yes*
-
-*ProtectSystem=full*
-
-*ProtectHome=read-only*
-
-*SecureBits=keep-caps*
-
-*Capabilities=CAP_IPC_LOCK+ep*
-
-*CapabilityBoundingSet=CAP_SYSLOG CAP_IPC_LOCK*
-
-*NoNewPrivileges=yes*
-
-*Environment=GOMAXPROCS=1*
-
-*ExecStart=/usr/local/bin/vault server -config=/etc/vault/config.json*
-
-*KillSignal=SIGINT*
-
-*TimeoutStopSec=30s*
-
-*Restart=on-failure*
-
-*StartLimitInterval=60s*
-
-*StartLimitBurst=3*
-
-*[Install]*
-
-*WantedBy=multi-user.target*
-
+[Install]
+WantedBy=multi-user.target
+```
 The suggested architecture, is to run a three-node cluster to avoid split-brain scenarios and maintain quorum. 
 
 A basic configuration file could be as follows:
@@ -76,7 +55,8 @@ A basic configuration file could be as follows:
 			"tls_key_file": "/etc/ssl/vault/vault.key"
 		}
 	}
-}```
+}
+```
 
 Where the backend configuration specifies where to store the data. Data will be stored encrypted at rest, and only available to vault after the unseal process.
 

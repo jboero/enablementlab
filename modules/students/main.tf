@@ -46,6 +46,9 @@ resource "aws_instance" "vault-node" {
   }  
   tags {
     Name = "${var.servername}-${element(var.students, count.index)}-${var.namespace}-${count.index}"
+    Role = "vault-cluster-node"
+    Namespace = "${var.namespace}"
+    User = "${element(var.students, count.index)}"
   }
 }
 output "vault-servers" { value = ["${aws_instance.vault-node.*.public_dns}"] }

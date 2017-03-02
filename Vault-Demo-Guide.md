@@ -60,39 +60,24 @@ The suggested architecture, is to run a three-node cluster to avoid split-brain 
 
 A basic configuration file could be as follows:
 
-{ {
-
+```json
+{
 	"backend": {
-
 		"consul": {
-
 			"address": "fqdn.of.consul.server",
-
 			"path": "kvstorepath"
-
 		}
-
 	},
-
 	"listener": {
-
 		"tcp": {
-
 			"address": "0.0.0.0:8200",
-
 			"tls_cert_file": "/etc/ssl/vault/vault.crt",
-
 			"tls_disable": 0,
-
 			"tls_key_file": "/etc/ssl/vault/vault.key"
-
 		}
-
 	}
+}```
 
-}
-
-}
 Where the backend configuration specifies where to store the data. Data will be stored encrypted at rest, and only available to vault after the unseal process.
 
 Data will be encrypted at all times (including transit via TLS), as described by the diagram below:

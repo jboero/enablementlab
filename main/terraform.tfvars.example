@@ -1,0 +1,3 @@
+awsaccountid = "longint"
+namespace    = "string"
+students     = ["ncorrare","bgreen"]

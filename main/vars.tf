@@ -29,7 +29,7 @@ variable "sshkey" {
 
 variable "keypath" {
   description = "Path to the SSH private key used to login into the systems"
-  default     = "/Users/ncorrare/.ssh/id_rsa"
+  default     = "~/.ssh/id_rsa"
 }
 
 variable "awsaccountid" {

@@ -15,6 +15,12 @@ Once it's done, the environment variables are set up automatically for each user
 
 The AWS provider is configured to read the default credentials for a file. Right now is on main/aws.tf, but it will be turned into a variable in the future.
 
+Note you should also have a look at main/vars.tf and make sure the variables reflect your environment.  All in all, the files you may need to edit are:
+
+- modules/students/files/ (add vault enterprise zip)
+- main/aws.tf
+- main/vars.tf 
+
 From the main directory, 'terraform apply'
 
 A key is deployed to login into each ec2-user, but each student can login using his username and 'hashicorp' as password. There is also a guide with a set of exercises you can run in this lab for enablement.
